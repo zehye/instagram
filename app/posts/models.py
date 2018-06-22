@@ -24,8 +24,3 @@ class Post(models.Model):
 
     # auth_now_add: 처음 만들어진 시간을 저장하고 auth_now: save가 될때마다 된다.
     created_at = models.DateTimeField(auto_now_add=True)
-
-    # def __str__(self):
-    #     return f'작성자: {self.author}, ' \
-    #            f'게시된 사진: {self.photo} - 게시글: {self.content}, ' \
-    #            f'발행일자: {self.created_at}'

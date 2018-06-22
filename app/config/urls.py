@@ -16,10 +16,14 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
+from . import views
 
 urlpatterns = [
+    path('', views.index),
     path('admin/', admin.site.urls),
+    path('posts/', include('posts.urls')),
     # path('media/<str:path>/', ),
     # 이렇게 하면 귀찮으니까
 ] + static(
