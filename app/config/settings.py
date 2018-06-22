@@ -14,6 +14,9 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# print(BASE_DIR)
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# print(MEDIA_ROOT)
 
 
 # Quick-start development settings - unsuitable for production
@@ -31,11 +34,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+
+    'posts.apps.PostsConfig',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+
+    # 정적파일을 관리하는 함수
     'django.contrib.staticfiles',
 ]
 
@@ -117,4 +125,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+# 정적파일에 접근할 URL접두어 / 접두어 (//로 오면 접두어)
 STATIC_URL = '/static/'
+
+# User-uploaded file에 접근할 URL접두어
+MEDIA_URL = '/media/'
