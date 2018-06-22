@@ -27,7 +27,7 @@ urlpatterns = [
     # path('media/<str:path>/', ),
     # 이렇게 하면 귀찮으니까
 ] + static(
-    prefix='/media/',
+    prefix=settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT,
 )
 

@@ -3,6 +3,12 @@
 {% block content %}
     <h1>post-list</h1>
     {% for post in posts %}
-        <div>{{ post }}</div>
+        <!--<a href="{% url 'posts:post-detail' post.pk %}">post detail</a>-->
+        <div>
+            <div>{{ post.author.username }}</div>
+            <div>
+                <img width="50%" src="{{ post.photo.url }}" alt="">
+            </div>
+        </div>
     {% endfor %}
 {% endblock %}
