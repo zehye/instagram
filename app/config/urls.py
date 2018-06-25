@@ -21,9 +21,10 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('', views.index),
+    path('', views.index, name='index'),
     path('admin/', admin.site.urls),
     path('posts/', include('posts.urls')),
+    path('members/', include('members.urls')),
     # path('media/<str:path>/', ),
     # 이렇게 하면 귀찮으니까
 ] + static(

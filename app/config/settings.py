@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 
     # 정적파일을 관리하는 함수
     'django.contrib.staticfiles',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
