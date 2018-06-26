@@ -18,6 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # print(MEDIA_ROOT)
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+AUTH_USER_MODEL = 'members.User'
 
 
 # Quick-start development settings - unsuitable for production
@@ -37,6 +38,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
 
     'posts.apps.PostsConfig',
+    'members.apps.MembersConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',
