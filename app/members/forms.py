@@ -72,3 +72,16 @@ class SignupForm(forms.Form):
         )
 
         return user
+
+
+class PostForm(forms.Form):
+    author = forms.CharField(
+
+    )
+    photo = forms.ImageField(
+        label='사진'
+    )
+    content = forms.TextField
+    created_at = forms.DateTimeField(
+
+    )
