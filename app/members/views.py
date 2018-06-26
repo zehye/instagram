@@ -1,7 +1,8 @@
 from django.contrib.auth import authenticate, logout, get_user_model
 from django.contrib.auth.views import login
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
+
+from .forms import SignupForm
 
 # User클래스 자체를 가져올때는 get_user_model()
 # ForeignKey에 User모델을 지정할 때는 settings.AUTH_USER_MODEL
@@ -39,6 +40,38 @@ def logout_view(request):
 
 
 def signup(request):
+    # form.is_valid()를 통과하지 못한 경우,
+    #   유효성 검증을 통과하지 못한 내용은 form.<field>.errors에 정의됨 -> form을 순회하면 form.<field>를 하나씩 순회
+    #   (통과하지 못한 경우의 'form'변수를 디버깅 이용해 확인해본다)
+
+    # 1. form.is_valid()를 통과하지 못했을 경우, 해당 내용을 template에 출력하도록 구현
+    # 2. SignupForm의 clean()메서드를 재 정의 하고, password와 password2를 비교해서 유효성을 검증하도록 구현
+    if request.method == 'POST':
+        form = SignupForm(request.POST)
+        # print('form은:', form)
+        # form에 들어있는 데이터가 유효한지 검사
+        if form.is_valid():
+            user = form.signup()
+            login(request, user)
+            return redirect('index')
+
+        # form.is_valid()를 통과하지 못한 경우에도
+        #   해당 form을 context를 사용해서 template으로 전달하고
+        #   template에서는 form이 가진 각 field의 errors를 출력한다.
+            # print(form.data)
+            # cleaded_data는 is_valid를 통과한 애들만 보여준다. (유효한 데이터)
+            # print(form.cleaned_data)
+            # result = '\n'.join(['{}: {}'.format(key, value) for key, value in form.errors.items()])
+            # return HttpResponse(result)
+    else:
+        form = SignupForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'members/signup.html', context)
+
+
+def signup_bak(request):
     context = {
         'errors': [],
     }
@@ -56,6 +89,29 @@ def signup(request):
 
         context['username'] = username
         context['email'] = email
+
+        required_fileds = {
+            'username': {
+                'verbose_name': '아이디',
+            },
+            'email': {
+                'verbose_name': '이메일',
+            },
+            'password': {
+                'verbose_name': '비밀번호',
+            },
+            'password2': {
+                'verbose_name': '비밀번호 확인',
+            }
+        }
+
+        for field_name in required_fileds.keys():
+            # print('field_name:', field_name)
+            # print('locals()[field_name]:', locals()[field_name])
+            if not locals()[field_name]:
+                context['errors'].append('{}을(를) 입력해주세요'.format(
+                    required_fileds[field_name]['verbose_name'],
+                ))
 
         # form에서 전송된 데이터들이 올바른지 검사
         if User.objects.filter(username=username).exists():
