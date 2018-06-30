@@ -1,13 +1,44 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>post-list</h1>
     {% for post in posts %}
         <!--<a href="{% url 'posts:post-detail' post.pk %}">post detail</a>-->
-        <div>
-            <div>{{ post.author.username }}</div>
+        <div class="card mb-3">
+            <div class="card-header">
+                <div class="float-left">
+                {% if post.author.img_profile %}
+                <img style="width: 30px;"
+                     class="rounded-circle float-left mr-1"
+                     src="{{ post.author.img_profile.url }}" alt="">
+                {% else %}
+                <img style="width: 30px;"
+                     class="rounded-circle float-left mr-1"
+                     src="/static/image/blank_user.png" alt="">
+                {% endif %}
+
+                <a href="{% url 'posts:post-detail' pk=post.pk %}">
+                    <span>{{ post.author.username }}</span></a>
+                </div>
+                <form action="" method="POST" style="display: inline-block;" >
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-primary btn-sm">+ Follow</button>
+                </form>
+                <form action="{% url 'posts:post-delete' pk=post.pk %}" method="POST" class="float-right">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-sm">지우기</button>
+                </form>
+            </div>
             <div>
-                <img width="50%" src="{{ post.photo.url }}" alt="">
+                <div class="card-body p-0" ></div>
+                <img width="100%" src="{{ post.photo.url }}" alt="">
+            </div>
+            <div>{{ post.content }}</div>
+            <div class="panel-body">
+                <form action="{% url 'posts:comment-create' pk=post.pk %}" method="POST" class="comment-form">
+                {% csrf_token %}
+                <input type="text" name="content" placeholder="댓글 달기...">
+                    <button type="submit">전송</button>
+                </form>
             </div>
         </div>
     {% endfor %}

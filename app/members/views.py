@@ -10,20 +10,36 @@ User = get_user_model()
 
 
 def login_view(request):
+
+    # 1. POST요청이 왔는데, 요청이 올바르면서 GET parameter에 'next'값이 존재할 경우
+    # 2. 해당 값(URL)으로 redirect
+    # 3. next값이 존재하지 않으면, 원래 이동하던 곳으로 그대로 redirect
+
     # print(request.POST)
     # 인증에 성공하면 posts:post-list로 이동
     # 실패하면 다시 members:login으로 이동
-
     if request.method == 'POST':
+        # print('GET:', request.GET)
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
 
         # 인증에 성공한 경우
         if user is not None:
+
             # 세션값을 만들어 DB에 저장하고, HTTP response의 Cookie에 해당값을 담아보내도록 하는
             # login()함수를 실행한다.
+
+            # session_id값을 django_sessions테이블에 저장, 데이터는 User와 연결됨
+            # 이 함수 실행 후 돌려줄 HTTP Response에는 Set-cookie헤더를 추가, 내용은 sessionid=<session값>
+
             login(request, user)
+
+            # GET parameter에 'next'값이 전달되는 경우 해당 값으로 redirect
+            next = request.GET.get('next')
+            if next:
+                # print('[next]:', request.GET['next'])
+                return redirect(next)
             return redirect('posts:post-list')
         # 인증에 실패한 경우(username, password가 틀린경우
         else:
@@ -47,7 +63,7 @@ def signup(request):
     # 1. form.is_valid()를 통과하지 못했을 경우, 해당 내용을 template에 출력하도록 구현
     # 2. SignupForm의 clean()메서드를 재 정의 하고, password와 password2를 비교해서 유효성을 검증하도록 구현
     if request.method == 'POST':
-        form = SignupForm(request.POST)
+        form = SignupForm(request.POST, request.FILES)
         # print('form은:', form)
         # form에 들어있는 데이터가 유효한지 검사
         if form.is_valid():
@@ -69,6 +85,10 @@ def signup(request):
         'form': form,
     }
     return render(request, 'members/signup.html', context)
+
+
+def withdraw(request):
+    pass
 
 
 def signup_bak(request):
@@ -132,3 +152,14 @@ def signup_bak(request):
             return redirect('index')
 
     return render(request, 'members/signup.html', context)
+
+def follow_toggle(reqeust):
+    """
+    GET요청은 처리하지 않음
+    POST요청일 때
+        1. request.POST로 'user.pk'값을 전달 받음
+        pk가 user_pk인 User를 user에 할당
+        2. request.user의
+    :param reqeust:
+    :return:
+    """

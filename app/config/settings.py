@@ -19,6 +19,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # print(MEDIA_ROOT)
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 AUTH_USER_MODEL = 'members.User'
+LOGIN_URL = 'members:login'
+
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+    STATIC_DIR,
+]
 
 
 # Quick-start development settings - unsuitable for production

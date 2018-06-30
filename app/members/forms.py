@@ -37,6 +37,46 @@ class SignupForm(forms.Form):
             }
         ),
     )
+    gender = forms.CharField(
+        label='성별',
+        widget=forms.Select(
+            attrs={
+                'class': 'form-control',
+            },
+            choices=User.CHOICES_GENDER,
+        )
+    )
+
+    img_profile = forms.FileField(
+        label='프로필 이미지',
+        widget=forms.ClearableFileInput(
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=False,
+    )
+
+    introduce = forms.CharField(
+        label='소개',
+        widget=forms.Textarea(
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=False,
+    )
+
+    site = forms.URLField(
+        label='사이트 URL',
+        widget=forms.URLInput(
+            attrs={
+                'class': 'form-control',
+            }
+        ),
+        required=False,
+    )
+
 
     def clean_username(self):
         # username field의 clean()실행 결과가 self.cleaned_data['username']에 있음
@@ -61,27 +101,65 @@ class SignupForm(forms.Form):
         return self.cleaned_data
 
     def signup(self):
-        username = self.cleaned_data['username']
-        email = self.cleaned_data['email']
-        password = self.cleaned_data['password']
+        fields = [
+            'username',
+            'email',
+            'password',
+            'gender',
+            'site',
+            'img_profile',
+            'introduce',
+        ]
+        # create_user_dict = {
+        #     'username': self.cleaned_data['username'],
+        #     'email': self.cleaned_data['email'],
+        #     'password': self.cleaned_data['password'],
+        #     'gender': self.cleaned_data['gender'],
+        #     'site': self.cleaned_data['site'],
+        #     'img_profile': self.cleaned_data['img_profile'],
+        #     'introduce': self.cleaned_data['introduce'],
+        #
+        # }
+        #
+        create_user_dict = {}
+        for key, value in self.cleaned_data.items():
+            if key in fields:
+                create_user_dict[key] = value
 
-        user = User.objects.create_user(
-            username=username,
-            password=password,
-            email=email,
-        )
+        # dict comprehension 사용
+        # create_user_dict = {key: value for (key, value) in self.cleaned_data.items() if key in fields}
+
+        # filter 사용
+        # def in_fields(item):
+        #     return item[0] in fields
+        #
+        # self.cleaned_date.items() = (('username', 'pjh'), ('passworld','pjh~'))
+        # result = filter(in_fields, self.cleaned_data.items())
+        # create_user = {}
+        # for item in result:
+        #     create_user_dict[item[0]] = item[1]
+        #
+        # create_user_dict = dict(filter(in_fields, self.cleaned_date.items()))
+        # create_user_dict_lambda = dict(filter(lambda item: item[0] in fields, self.cleaned_date.items()))
+
+        user = User.objects.create_user(**create_user_dict)
+        # username = self.cleaned_data['username']
+        # email = self.cleaned_data['email']
+        # password = self.cleaned_data['password']
+        # gender = self.cleaned_data['gender']
+        # img_profile = self.cleaned_data['img_profile']
+        # site = self.cleaned_data['site']
+        # introduce = self.cleaned_data['introduce']
+        #
+        # user = User.objects.create_user(
+        #     username=username,
+        #     password=password,
+        #     email=email,
+        #     gender=gender,
+        #     img_profile=img_profile,
+        #     site=site,
+        #     introduse=introduce,
+        # )
 
         return user
 
-
-class PostForm(forms.Form):
-    author = forms.CharField(
-
-    )
-    photo = forms.ImageField(
-        label='사진'
-    )
-    content = forms.TextField
-    created_at = forms.DateTimeField(
-
-    )

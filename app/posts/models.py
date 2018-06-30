@@ -1,3 +1,5 @@
+import re
+
 from django.conf import settings
 from django.db import models
 
@@ -11,6 +13,7 @@ from django.db import models
 
 
 class Post(models.Model):
+    PATTERN_HASHTAG = re.compile(r'#(\w+)')
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -24,3 +27,38 @@ class Post(models.Model):
 
     # auth_now_add: 처음 만들어진 시간을 저장하고 auth_now: save가 될때마다 된다.
     created_at = models.DateTimeField(auto_now_add=True)
+    tags = models.ManyToManyField('HashTag', blank=True)
+
+    class Meta:
+        ordering = ['-pk']
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        for tag_name in re.findall(self.PATTERN_HASHTAG, self.content):
+            tag, tag_created = HashTag.objects.get_or_create(name=tag_name)
+            self.tags.add(tag)
+
+
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE,
+        related_name='comments'
+        )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    text = models.TextField()
+
+    def __str__(self):
+        return f'Comment (PK: {self.pk}, Author: {self.author.username})'
+
+
+class HashTag(models.Model):
+    name = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f'HashTag (self.name)'
